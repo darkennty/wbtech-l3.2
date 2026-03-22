@@ -1,0 +1,45 @@
+services:
+
+  db:
+    image: postgres
+    container_name: postgres
+    networks:
+      - db-net
+    environment:
+      PGUSER: ${APP_POSTGRES_USER}
+      PGDATABASE: ${APP_POSTGRES_DB}
+      POSTGRES_PASSWORD: ${APP_POSTGRES_PASS}
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U ${APP_POSTGRES_USER} -d ${APP_POSTGRES_DB}" ]
+      interval: 10s
+      retries: 5
+      start_period: 30s
+      timeout: 10s
+    ports:
+      - "${APP_POSTGRES_PORT}:5432"
+    volumes:
+      - ./migrations/create_db.sql:/docker-entrypoint-initdb.d/create_database.sql
+
+  migrate:
+    image: migrate/migrate
+    container_name: migrations
+    networks:
+      - db-net
+    volumes:
+      - ./migrations:/migrations
+    command: [ "-path", "/migrations", "-database",  "postgres://${APP_POSTGRES_USER}:${APP_POSTGRES_PASS}@db:${APP_POSTGRES_PORT}/${APP_POSTGRES_DB}?sslmode=${APP_POSTGRES_SSL_MODE}", "up"]
+    links:
+      - db
+    depends_on:
+      db:
+        condition: service_healthy
+
+  redis:
+    image: redis:7
+    container_name: rediska
+    ports:
+      - "6379:6379"
+
+networks:
+  db-net:
+    driver: bridge
