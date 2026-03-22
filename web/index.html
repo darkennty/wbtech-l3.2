@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>URL Shortener</title>
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+
+<h1>URL Shortener</h1>
+
+<section class="card">
+    <h2>Создать ссылку</h2>
+
+    <input id="url-input" placeholder="Длинная ссылка (https://...)" />
+    <input id="custom-input" placeholder="Желаемый short_url (опционально)" />
+
+    <button onclick="createShort()">Создать</button>
+
+    <p id="create-error" class="error"></p>
+    <p id="short-result"></p>
+</section>
+
+<section class="card">
+    <h2>Аналитика</h2>
+
+    <input id="short-input" placeholder="short_url" />
+
+    <select id="aggregate-select">
+        <option value="">Без агрегации</option>
+        <option value="day">По дням</option>
+        <option value="month">По месяцам</option>
+        <option value="user_agent">По User-Agent</option>
+    </select>
+
+    <button onclick="loadAnalytics()">Показать</button>
+
+    <p id="analytics-error" class="error"></p>
+
+    <table id="analytics-table">
+        <thead></thead>
+        <tbody></tbody>
+    </table>
+</section>
+
+<script src="/static/app.js"></script>
+</body>
+</html>
